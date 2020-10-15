@@ -190,9 +190,12 @@ PHP;
         $lockData['packages-dev'] = $lockData['packages-dev'] ?? [];
 
         foreach (array_merge($lockData['packages'], $lockData['packages-dev']) as $package) {
-            yield $package['name'] => $package['version'] . '@' . (
-                $package['source']['reference']?? $package['dist']['reference'] ?? ''
-            );
+            yield $package['name'] =>
+            [
+                'version' => $package['version'],
+                'source' => $package['source'],
+                'ref' => $package['source']['reference']?? $package['dist']['reference'] ?? ''
+            ];
         }
 
         foreach ($rootPackage->getReplaces() as $replace) {
@@ -201,9 +204,19 @@ PHP;
                 $version = $rootPackage->getPrettyVersion();
             }
 
-            yield $replace->getTarget() => $version . '@' . $rootPackage->getSourceReference();
+            yield $replace->getTarget() =>
+            [
+                'version' => $version,
+                'source' => ['url' => $rootPackage->getSourceUrl() ],
+                'ref' => $rootPackage->getSourceReference()
+            ];
         }
 
-        yield $rootPackage->getName() => $rootPackage->getPrettyVersion() . '@' . $rootPackage->getSourceReference();
+        yield $rootPackage->getName() =>
+        [
+            'version' => $rootPackage->getPrettyVersion(),
+            'source' => ['url' => $rootPackage->getSourceUrl() ],
+            'ref' => $rootPackage->getSourceReference()
+        ];
     }
 }
