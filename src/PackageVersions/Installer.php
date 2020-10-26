@@ -155,7 +155,7 @@ PHP;
         rename($installPathTmp, $installPath);
 
         $jsonPathTmp = $jsonPath . '_' . uniqid('tmp', true);
-        file_put_contents($jsonPathTmp, $versions);
+        file_put_contents($jsonPathTmp, json_encode($versions));
         chmod($jsonPathTmp, 0664);
         rename($jsonPathTmp, $jsonPath);
 
