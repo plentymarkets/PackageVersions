@@ -137,7 +137,7 @@ PHP;
         $installPath = self::locateRootPackageInstallPath($composer->getConfig(), $composer->getPackage())
             . '/src/PackageVersions/Versions.php';
 
-        $jsonPAth = self::locateRootPackageInstallPath($composer->getConfig(), $composer->getPackage())
+        $jsonPath = self::locateRootPackageInstallPath($composer->getConfig(), $composer->getPackage())
             . '/src/PackageVersions/version.json';
 
 
@@ -154,10 +154,10 @@ PHP;
         chmod($installPathTmp, 0664);
         rename($installPathTmp, $installPath);
 
-        $jsonPathTmp = $installPath . '_' . uniqid('tmp', true);
+        $jsonPathTmp = $jsonPath . '_' . uniqid('tmp', true);
         file_put_contents($jsonPathTmp, $versions);
         chmod($jsonPathTmp, 0664);
-        rename($jsonPathTmp, $jsonPAth);
+        rename($jsonPathTmp, $jsonPath);
 
 
         $io->write('<info>ocramius/package-versions:</info> ...done generating version class');
