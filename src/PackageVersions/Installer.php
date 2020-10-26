@@ -113,7 +113,7 @@ PHP;
 
         $versionClass = self::generateVersionsClass($rootPackage->getName(), $versions);
 
-        self::writeVersionClassToFile($versionClass, $composer, $composerEvent->getIO());
+        self::writeVersionClassToFile($versionClass, $composer, $composerEvent->getIO(), $versions);
     }
 
     /**
@@ -132,10 +132,14 @@ PHP;
     /**
      * @throws RuntimeException
      */
-    private static function writeVersionClassToFile(string $versionClassSource, Composer $composer, IOInterface $io) : void
+    private static function writeVersionClassToFile(string $versionClassSource, Composer $composer, IOInterface $io, $versions) : void
     {
         $installPath = self::locateRootPackageInstallPath($composer->getConfig(), $composer->getPackage())
             . '/src/PackageVersions/Versions.php';
+
+        $jsonPAth = self::locateRootPackageInstallPath($composer->getConfig(), $composer->getPackage())
+            . '/src/PackageVersions/version.json';
+
 
         if (! file_exists(dirname($installPath))) {
             $io->write('<info>ocramius/package-versions:</info> Package not found (probably scheduled for removal); generation of version class skipped.');
@@ -149,6 +153,12 @@ PHP;
         file_put_contents($installPathTmp, $versionClassSource);
         chmod($installPathTmp, 0664);
         rename($installPathTmp, $installPath);
+
+        $jsonPathTmp = $installPath . '_' . uniqid('tmp', true);
+        file_put_contents($jsonPathTmp, $versions);
+        chmod($jsonPathTmp, 0664);
+        rename($jsonPathTmp, $jsonPAth);
+
 
         $io->write('<info>ocramius/package-versions:</info> ...done generating version class');
     }
